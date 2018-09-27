@@ -1,59 +1,70 @@
 import math
 
+# 0 simplex.
 class Point(object):
 
+    # Constructor
     def __init__(self, X, Y, Z):
         self.X = X
         self.Y = Y
         self.Z = Z
-
+    
+    # Boolean Equality.
     def __eq__(self, other):
 
         return ((self.X == other.X) and (self.Y == other.Y) and (self.Z == other.Z))
 
     def __str__(self):
         return '(' + str(self.X) + ', ' + str(self.Y) + ', ' + str(self.Z) + ')'
-
+    
+    # Euclidean difference vector, returning vector A->B for point A to point B.
     def to(self, other):
         return Vector(other.X - self.X, other.Y - self.Y, other.Z - self.Z)
 
-
+# 1 simplex.
 class Line(object):
 
+    # Constructor.
     def __init__(self, A, B):
         self.A = A
         self.B = B
 
+    # String rep.
     def __str__(self):
         return '['+str(self.A)+' ==> '+str(self.B)+']'
-
+    
+    # Returns a unit vector parallel to self.
     def direction(self):
         return (self.A.to(self.B)).unit()
 
+    # Boolean intersection with constant Z plane.
     def inrange(self, z0):
         if (self.A.Z < z0 and z0 <= self.B.Z) or (self.B.Z < z0 and z0 < self.A.Z):
             return True
         else:
             return False
-
+    # Point of intersection with constant Z plane.
     def lp_int(self, z0):
         if (self.A.Z < z0 and z0 < self.B.Z) or (self.B.Z <= z0 and z0 < self.A.Z):
             t = (z0 - self.A.Z) / (self.B.Z - self.A.Z)
             return Point(self.A.X + t * (self.B.X - self.A.X), self.A.Y + t * (self.B.Y - self.A.Y), z0)
 
-
+# 2 simplex.
 class Triangle(object):
 
+    # Constructor.
     def __init__(self, p1, p2, p3):
 
         self.p1 = p1
         self.p2 = p2
         self.p3 = p3
-
+    
+    # String rep.
     def __str__(self):
 
         return '[' + str(self.p1) + ', ' + str(self.p2) + ', ' + str(self.p3) + ']'
-
+    
+    # Boolean intersection  with constant Z plane.
     def inrange(self, z0):
 
         if self.min() < z0 and z0 < self.max():
@@ -63,15 +74,18 @@ class Triangle(object):
         else:
 
             return False
-
+    
+    # Lowest vertex.
     def min(self):
 
         return min(self.p1.Z, self.p2.Z, self.p3.Z)
-
+    
+    #Highest vertex.
     def max(self):
 
         return max(self.p1.Z, self.p2.Z, self.p3.Z)
-
+    
+    # Line of intersection with constant Z plane.
     def tp_int(self, z0):
 
         q1 = Point(0,0,0)
